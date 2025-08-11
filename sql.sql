@@ -19,6 +19,7 @@ CREATE TABLE cards (
     card_id INT AUTO_INCREMENT,
     card_owner INT,
     card_api_id INT,
+    card_name VARCHAR(100),
     PRIMARY KEY (card_id),
     FOREIGN KEY (card_owner) REFERENCES users(user_id)
 );
