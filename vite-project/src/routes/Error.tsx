@@ -1,4 +1,4 @@
-function Gallery() {
+function Error() {
   return (
     <>
       <div></div>
@@ -6,4 +6,4 @@ function Gallery() {
   )
 }
 
-export default Gallery;
+export default Error;

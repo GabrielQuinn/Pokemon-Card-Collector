@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+
+/*
+
+primary-text: #FDF5F0
+secondary-text: #E5D0CC
+alt-text: #BFACB5
+extra: #7F7B82
+alt-background: #444554
+secondary-background: #172121
+primary-background: #0B1112
+
+*/
+
+:root {
+    --primary-text: #FDF5F0;
+    --secondary-text: #E5D0CC;
+    --alt-text: #BFACB5;
+    --extra: #7F7B82;
+    --alt-background: #444554;
+    --secondary-background: #172121;
+    --primary-background: #0B1112;
+}
+
+body {
+    background-color: var(--primary-background);
+    color: var(--primary-text);
+    font-family: "Titillium Web", serif;
+}
+
+button, input {
+    font-family: "Titillium Web", serif;
+}
+
+/* General Classes */
+
+.hidden {
+    display: none;
+}
+
+/* Shop */
+
+.Shop > section {
+    background-color: var(--secondary-background);
+    margin: 0.5em;
+    padding: 2em 0.5em;
+    border-radius: 0.2em;
+    border: 0.1em solid var(--alt-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+}
+
+.revealBtn {
+    width: 9em;
+    height: 15em;
+    border-radius: 0.2em;
+    border: 0.1em solid var(--alt-text);
+    background-color: var(--alt-background);
+    color: var(--secondary-text);
+    font-size: 1.2em;
+    transition: all 0.2s;
+}
+
+.revealBtn:hover {
+    background-color: var(--extra);
+    color: var(--primary-text);
+    border: 0.2em solid var(--secondary-text);
+    box-shadow: 0 0 1em var(--secondary-text);
+}
