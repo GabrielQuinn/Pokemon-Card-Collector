@@ -16,7 +16,7 @@ function json_response($status, $data) {
 // Options
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header("Access-Control-Allow-Methods: *");
-    header("Access-Control-Allow-Headers: Authorization,Accept, Content-Type, Origin, X-API-KEY"); // API KEY HERE!!!!!!
+    header("Access-Control-Allow-Headers: Authorization,Accept, Content-Type, Origin, X-API-KEY");
     header("Access-Control-Allow-Origin: *");
     http_response_code(204);
     exit(0);
@@ -31,6 +31,19 @@ $uri = parse_url($_SERVER["REQUEST_URI"]);
 define("__BASE__", "/backend/api/");
 $endpoint = str_replace(__BASE__, "", $uri["path"]);
 $method = $_SERVER["REQUEST_METHOD"];
+
+require __DIR__ . "/../vendor/autoload.php";
+
+// Get Pokemon API Key from .env
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
+$pokemon_api_key = $_ENV["POKEMON_API_KEY"];
+
+use Pokemon\Pokemon;
+
+Pokemon::Options(['verify' => true]);
+Pokemon::ApiKey($pokemon_api_key);
 
 // Routes
 
@@ -237,7 +250,7 @@ else if (preg_match("/^user\/friends/", $endpoint)) {
     }
 }
 
-else if (preg_match("/^library/", $endpoint)) {
+else if (preg_match("/^library$/", $endpoint)) {
     switch ($method) {
         case "GET":
 
@@ -280,7 +293,7 @@ else if (preg_match("/^library/", $endpoint)) {
 
             $query = "INSERT INTO cards (card_owner, card_api_id, card_name) VALUES (?, ?, ?)";
 
-            $stmt = $pdo->query($query);
+            $stmt = $pdo->prepare($query);
             $stmt->execute([$user_id, $card_api_id, $card_name]);
 
             json_response(204, "");
@@ -303,6 +316,30 @@ else if (preg_match("/^library/", $endpoint)) {
 
             json_response(204, "");
             break;
+    }
+}
+
+else if (preg_match("/^cards\/?[0-9]*?$/", $endpoint)) {
+
+    if ($method == "GET") {
+
+        $id = basename($endpoint) ?? "";
+        
+        $cards = Pokemon::Card()->all();
+
+        $cardsArray = array_map(function($card) {
+            $card_array = $card->toArray();
+            return $card_array["name"];
+        }, $cards);
+
+        if ($id > 0 && $id < 251) {
+            json_response(200, $cardsArray[$id]);
+        }
+
+        json_response(200, $cardsArray);
+        //json_response(200, $cards);
+    } else {
+        //
     }
 }
 

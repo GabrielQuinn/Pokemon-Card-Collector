@@ -10,19 +10,13 @@ function Shop() {
         setDisplayCard(true);
 
         // call API
-
-        const url = "https://api.pokemontcg.io/v2/cards?q=nationalPokedexNumbers:1";
-
-        fetch(url)
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data);
-            }).catch((err) => console.log(err))
     }
 
     function addCard() {
         // call API
     }
+
+    console.log(displayCard);
 
     return (
         <>
@@ -30,18 +24,18 @@ function Shop() {
             <section className="Shop">
                 <h1>Shop</h1>
                 <section>
-                    <div>
+                    <div className={displayCard ? "hidden" : ""}>
                         <label htmlFor="search">Package: </label>
-                        <input type="text" value={1} id="search" name="search" />
+                        <input type="number" id="search" name="search" min={1} max={100} />
                     </div>
                     <div className={"" + (displayCard ? "" : "hidden")}>
                         <h3>Card Name</h3>
                         <p>Description</p>
                     </div>
                     <button onClick={getCard} className={"revealBtn " + (displayCard ? "hidden" : "")}>Reveal Card</button>
-                    <div className={displayCard ? "" : "hidden"}>
-                        <button onClick={addCard}>Add to Library</button>
-                        <button>Next Card</button>
+                    <div>
+                        <button onClick={addCard} className={displayCard ? "" : "hidden"}>Add to Library</button>
+                        <button className={displayCard ? "" : "hidden"}>Next Card</button>
                     </div>
                 </section>
             </section>

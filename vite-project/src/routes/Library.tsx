@@ -5,6 +5,7 @@ function Library() {
     <>
       <NavBar/>
       <section className="Library">
+        <h1>Hello</h1>
       </section>
     </>
   )

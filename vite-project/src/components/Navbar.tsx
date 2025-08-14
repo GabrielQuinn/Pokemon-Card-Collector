@@ -1,10 +1,11 @@
 import { NavLink } from "react-router";
-import "../styles/NavBar.css";
 
 export default function NavBar() {
   return <nav className="NavBar">
     <NavLink to="/">Home</NavLink>
     <NavLink to="/shop">Shop</NavLink>
-    <NavLink to="/gallery">Library</NavLink>
+    <NavLink to="/library">Library</NavLink>
+    <NavLink to="/users">Users</NavLink>
+    <NavLink to="/profile">Profile</NavLink>
   </nav>;
 }
