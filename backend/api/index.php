@@ -259,7 +259,7 @@ else if (preg_match("/^library$/", $endpoint)) {
             $user_name = $_GET["user_name"] ?? "";
             $card_name = $_GET["card_name"] ?? "";
 
-            validate_data([$user_name, $card_name]);
+            validate_data([$user_name]);
 
             $user_id = get_id_from_name($pdo, $user_name);
 
@@ -271,7 +271,7 @@ else if (preg_match("/^library$/", $endpoint)) {
                 $params[] = $card_name;
             }
             
-            $query = "SELECT card_api_id FROM cards WHERE card_owner = {$user_id}" . $where_clause;
+            $query = "SELECT card_name, card_image, card_rarity FROM cards WHERE card_owner = {$user_id}" . $where_clause;
             $stmt = $pdo->query($query);
 
             $results = $stmt->fetchAll();
@@ -284,17 +284,18 @@ else if (preg_match("/^library$/", $endpoint)) {
             // Add card to user's library
 
             $user_name = $_POST["user_name"] ?? "";
-            $card_api_id = $_POST["card_api_id"] ?? "";
+            $card_image = $_POST["card_image"];
+            $card_rarity = $_POST["card_rarity"];
             $card_name = $_POST["card_name"] ?? "";
 
-            validate_data([$user_name, $card_api_id, $card_name]);
+            validate_data([$user_name, $card_image, $card_rarity, $card_name]);
 
             $user_id = get_id_from_name($pdo, $user_name);
 
-            $query = "INSERT INTO cards (card_owner, card_api_id, card_name) VALUES (?, ?, ?)";
+            $query = "INSERT INTO cards (card_owner, card_image, card_rarity, card_name) VALUES (?, ?, ?, ?)";
 
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$user_id, $card_api_id, $card_name]);
+            $stmt->execute([$user_id, $card_image, $card_rarity, $card_name]);
 
             json_response(204, "");
             break;
@@ -325,14 +326,19 @@ else if (preg_match("/^cards\/?[0-9]*?$/", $endpoint)) {
 
         $id = basename($endpoint) ?? "";
         
-        $cards = Pokemon::Card()->all();
+        $cards = Pokemon::Card()->where(["number" => "1"])->all();
 
         $cardsArray = array_map(function($card) {
             $card_array = $card->toArray();
-            return $card_array["name"];
+            return [
+                "name" => $card_array["name"],
+                "image" => $card_array["images"]["small"],
+                "rarity" => $card_array["rarity"]
+            ];
+            //return $card_array;
         }, $cards);
 
-        if ($id > 0 && $id < 251) {
+        if ($id > 0 && $id < 155) {
             json_response(200, $cardsArray[$id]);
         }
 
