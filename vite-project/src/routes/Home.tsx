@@ -9,7 +9,7 @@ function Home() {
         <h2>Pokemon Card Collection</h2>
         <p>Website created by Gabriel Quinn. Collect and claim cards.</p>
         <p>Use navigation at the top of the page to view the website.</p>
-        <img src="../assets/homelogo.png" alt="" />
+        <img src="/homelogo.png" alt="" />
       </section>
     </>
   )

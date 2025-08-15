@@ -81,7 +81,7 @@ a:hover {
     display: none;
 }
 
-.Shop h1, .Home h1, .Library h1 {
+.Shop h1, .Home h1, .Library h1, .Error h1, .All h1 {
     color: var(--secondary-text);
     text-align: center;
     letter-spacing: 0.2em;
@@ -101,8 +101,15 @@ a:hover {
 }
 
 /* Home */
-.Home {
+.Home, .Error {
     margin: 0 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Home img {
+    width: 10em;
 }
 
 /* Shop */

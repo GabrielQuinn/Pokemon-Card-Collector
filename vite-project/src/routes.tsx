@@ -4,6 +4,7 @@ import Home from './routes/Home';
 import Error from './routes/Error';
 import Shop from './routes/Shop';
 import Library from './routes/Library';
+import All from './routes/All';
 
 const routes: RouteObject[] = [
   {
@@ -21,6 +22,10 @@ const routes: RouteObject[] = [
       {
         path: '/shop',
         element: <Shop />
+      },
+      {
+        path: '/all',
+        element: <All />
       }
     ]
   }

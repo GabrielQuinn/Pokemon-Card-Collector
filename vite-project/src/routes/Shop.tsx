@@ -2,6 +2,7 @@ import NavBar from "../components/Navbar";
 import { useState } from "react";
 import type { Card } from "../types/types";
 import "../styles/index.css";
+import { NavLink } from "react-router";
 
 function Shop() {
 
@@ -22,7 +23,7 @@ function Shop() {
             const jsonResponse = await resp.json();
 
             setCurrentCard(jsonResponse);
-            console.log(jsonResponse);
+            //console.log(jsonResponse);
             return jsonResponse;
         } catch (error: unknown) {
             console.error("Error:", error);
@@ -53,11 +54,17 @@ function Shop() {
                 const jsonResponse = await resp.json();
                 return jsonResponse;
             } else {
+                setCurrentCard(null);
+
                 return null;
             }
         } catch (error: unknown) {
             throw new Error("Error: " + error);
         }
+    }
+
+    function nextCard() {
+        setCurrentCard(null);
     }
 
     return (
@@ -66,10 +73,7 @@ function Shop() {
             <section className="Shop">
                 <h1>Shop</h1>
                 <section>
-                    <div className={currentCard != null ? "hidden" : ""}>
-                        <label htmlFor="search">Package: </label>
-                        <input type="number" id="search" name="search" min={1} max={100} />
-                    </div>
+                    <NavLink to="/all">View All Cards</NavLink>
                     <div className={"" + (currentCard != null ? "" : "hidden")}>
                         <h3>Card Name: {currentCard?.name}</h3>
                         <img src={currentCard?.image} alt={`The ${currentCard?.name} Pokemon card`} />
@@ -78,7 +82,7 @@ function Shop() {
                     <button onClick={getCard} className={"revealBtn " + (currentCard != null ? "hidden" : "")}>Reveal Card</button>
                     <div>
                         <button onClick={addCard} className={currentCard != null ? "" : "hidden"}>Add to Library</button>
-                        <button className={currentCard != null ? "" : "hidden"}>Next Card</button>
+                        <button onClick={nextCard} className={currentCard != null ? "" : "hidden"}>Next Card</button>
                     </div>
                 </section>
             </section>
