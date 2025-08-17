@@ -30,8 +30,10 @@ function Library() {
     try {
       // Remove card
 
+      const target = ev.target as HTMLElement;
+
       const user_name = "gabe";
-      const card_name = "test";
+      const card_name = (target?.parentElement as HTMLElement).classList[1];
 
       const url = `http://localhost/backend/api/library?user_name=${user_name}&card_name=${card_name}`;
 
@@ -61,7 +63,7 @@ function Library() {
         <section>
           {cards.map((e) => {
             return (
-              <div key={e.card_id} className={"cardEntry " + e.card_id}>
+              <div key={e.card_id} className={"cardEntry " + e.card_name + " " + e.card_id}>
                 <Card key={e.card_id} name={e.card_name} image={e.card_image} rarity={e.card_rarity} />
                 <form onSubmit={removeFromLibrary}>
                   <button type="submit">Remove from Library</button>

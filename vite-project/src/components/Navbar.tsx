@@ -7,5 +7,6 @@ export default function NavBar() {
     <NavLink to="/library">Library</NavLink>
     <NavLink to="/users">Users</NavLink>
     <NavLink to="/profile">Profile</NavLink>
+    <NavLink to="/login">Log Out</NavLink>
   </nav>;
 }

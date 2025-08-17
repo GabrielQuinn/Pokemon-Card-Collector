@@ -11,3 +11,15 @@ export interface Card {
   image: string;
   rarity: string;
 }
+
+export interface UserData {
+  user_name: string;
+  user_api: string;
+  user_creation_date: string;
+  user_public: number;
+}
+
+export interface User {
+  user_name: string;
+  user_creation_date: string;
+}

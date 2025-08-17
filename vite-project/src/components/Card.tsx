@@ -4,7 +4,7 @@ function Card({ name, image, rarity }: CardProps ) {
   return (
     <>
       <div className="Card">
-        <h2>{name}</h2>
+        <h2 className={rarity.toLowerCase()}>{name}</h2>
         <img src={image} alt={"The official " + name + " Pokemon card"} />
         <p>Rarity: {rarity}</p>
       </div>

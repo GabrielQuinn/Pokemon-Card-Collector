@@ -1,17 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
-/*
-
-primary-text: #FDF5F0
-secondary-text: #E5D0CC
-alt-text: #BFACB5
-extra: #7F7B82
-alt-background: #444554
-secondary-background: #172121
-primary-background: #0B1112
-
-*/
-
 :root {
     --primary-text: #FDF5F0;
     --secondary-text: #E5D0CC;
@@ -20,6 +8,10 @@ primary-background: #0B1112
     --alt-background: #444554;
     --secondary-background: #172121;
     --primary-background: #0B1112;
+
+    /* Rarities */
+
+    --uncommon: #ffaedd;
 }
 
 body {
@@ -27,6 +19,15 @@ body {
     color: var(--primary-text);
     font-family: "Titillium Web", serif;
     margin: 0;
+}
+
+h1 {
+    color: var(--secondary-text);
+    text-align: center;
+    letter-spacing: 0.2em;
+    font-size: 3em;
+    height: 2em;
+    margin: 0.5em 0 0 0;
 }
 
 button, input {
@@ -81,13 +82,14 @@ a:hover {
     display: none;
 }
 
-.Shop h1, .Home h1, .Library h1, .Error h1, .All h1 {
-    color: var(--secondary-text);
-    text-align: center;
-    letter-spacing: 0.2em;
-    font-size: 3em;
-    height: 2em;
-    margin: 0.5em 0 0 0;
+/* Rarities */
+
+.common {
+    color: var(--primary-text);
+}
+
+.uncommon {
+    color: var(--uncommon);
 }
 
 /* Navbar */
@@ -100,7 +102,34 @@ a:hover {
     padding-bottom: 0.5em;
 }
 
+/* Card */
+
+.Card {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    border: 0.1em, solid var(--secondary-text);
+    border-radius: 1em;
+    padding: 1em;
+    transition: all 0.4s;
+}
+
+.Card h2 {
+    text-align: center;
+}
+
+.Card img {
+    border: 0.1em solid var(--primary-text);
+    border-radius: 1em;
+    width: 12em;
+}
+
+.Card:hover {
+    background-color: var(--alt-background);
+}
+
 /* Home */
+
 .Home, .Error {
     margin: 0 1em;
     display: flex;
@@ -147,5 +176,76 @@ a:hover {
     background-color: var(--extra);
     color: var(--primary-text);
     border: 0.2em solid var(--secondary-text);
-    /*box-shadow: 0 0 1em var(--secondary-text);*/
+}
+
+/* Library */
+
+.Library img, .All img {
+    width: 6em;
+}
+
+.Library > section, .All > section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5em;
+}
+
+.Library .cardEntry, .All .cardEntry {
+    margin: 0em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.Library .Card, .All .Card {
+    padding: 0.2em;
+}
+
+.Library section > div {
+    margin: 1em;
+}
+
+/* Profile */
+
+.Profile section {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+}
+
+.Profile section > div {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 1em;
+}
+
+/* Users */
+
+.Users section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5em;
+    padding: 0.3em;
+}
+
+.Users section > div {
+    border: 0.1em solid var(--alt-background);
+    border-radius: 0.5em;
+    padding: 0.3em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Login */
+
+.Login form {
+    padding: 0.5em;
+}
+
+.Login form > div {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0.5em;
 }

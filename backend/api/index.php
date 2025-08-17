@@ -14,10 +14,12 @@ function json_response($status, $data) {
 }
 
 // Options
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Authorization, Accept, Content-Type, Origin, X-API-KEY");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
+
+// Handle preflight
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    header("Access-Control-Allow-Methods: *");
-    header("Access-Control-Allow-Headers: Authorization,Accept, Content-Type, Origin, X-API-KEY");
-    header("Access-Control-Allow-Origin: *");
     http_response_code(204);
     exit(0);
 }
@@ -47,26 +49,43 @@ Pokemon::ApiKey($pokemon_api_key);
 
 // Routes
 
-if (preg_match("/^user\/account/", $endpoint)) {
+if (preg_match("/^user/", $endpoint)) {
     switch ($method) {
         case "GET":
-
-            // Get all account info
 
             $user_name = $_GET["user_name"] ?? "";
 
             validate_data([$user_name]);
 
-            $query = "SELECT user_name, user_api, user_creation_date, user_public FROM users
-                WHERE user_name LIKE ?";
+            $results;
 
-            $stmt = $pdo->prepare($query);
-            $stmt->execute([$user_name]);
+            if (preg_match("/^user\/account$/", $endpoint)) {
+                // Get all account info
 
-            $results = $stmt->fetchAll();
+                $query = "SELECT user_name, user_api, user_creation_date, user_public FROM users
+                    WHERE user_name LIKE ?";
+
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$user_name]);
+
+                $results = $stmt->fetch();
+
+            } else if (preg_match("/^user\/discovery$/", $endpoint)) {
+                // Get all public accounts
+
+                $query = "SELECT user_name, user_creation_date FROM users WHERE user_public = 1 AND user_name NOT LIKE ?";
+
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$user_name]);
+
+                $results = $stmt->fetchAll();
+
+            } else {
+                json_response(404, "Endpoint does not exist");
+            }
 
             if (!$results) {
-                json_response(200, "No entries found");
+                json_response(200, []);
             } else {
                 json_response(200, $results);
             }
@@ -74,41 +93,69 @@ if (preg_match("/^user\/account/", $endpoint)) {
             break;
         case "POST":
 
-            // Create a new user
+            if (preg_match("/^user\/account\/create$/", $endpoint)) {
+                // Create a new user
 
-            $user_name = $_POST["user_name"] ?? "";
-            $user_pass = $_POST["user_word"] ?? "";
+                $user_name = $_POST["user_name"] ?? "";
+                $user_pass = $_POST["user_pass"] ?? "";
 
-            validate_data([$user_name, $user_pass]);
+                validate_data([$user_name, $user_pass]);
 
-            // Verify the username does not already exist
-            $query = "SELECT user_id FROM users WHERE user_name LIKE ?";
+                // Verify the username does not already exist
+                $query = "SELECT user_id FROM users WHERE user_name LIKE ?";
 
-            $stmt = $pdo->prepare($query);
-            $stmt->execute([$user_name]);
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$user_name]);
 
-            if ($stmt->rowCount()) {
-                json_response(200, "Username already exists");
+                if ($stmt->rowCount()) {
+                    json_response(200, "Username already exists");
+                }
+                
+                // Hash the password
+                $hash_pass = password_hash($user_pass, PASSWORD_DEFAULT);
+
+                // Generate API key
+                $api_key = bin2hex(random_bytes(32));
+
+                $query = "INSERT INTO users (user_name, user_pass, user_api, user_creation_date, user_public) VALUES (?, ?, ?, NOW(), 0)";
+
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$user_name, $hash_pass, $api_key]);
+
+                json_response(204, "");
+                break;
+            } else if (preg_match("/^user\/account\/login$/", $endpoint)) {
+
+                // Get user name and password, find username, check if passwords match, and return user info
+
+                $user_name = $_POST["user_name"] ?? "";
+                $user_pass = $_POST["user_pass"] ?? "";
+
+                validate_data([$user_name, $user_pass]);
+
+                // Verify the username exists
+                $query = "SELECT user_pass FROM users WHERE user_name LIKE ?";
+
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$user_name]);
+
+                if (!$stmt->rowCount()) {
+                    json_response(200, "Username does not exist");
+                }
+
+                $result = $stmt->fetch();
+
+                if (!password_verify($user_pass, $result["user_pass"])) {
+                    json_response(200, "Incorrect password");
+                } else {
+                    json_response(204, "");
+                }
+            } else {
+                json_response(404, "Endpoint does not exist");
             }
-            
-            // Hash the password
-            $hash_pass = password_hash($user_pass, PASSWORD_DEFAULT);
-
-            // Generate API key
-            $api_key = bin2hex(random_bytes(32));
-
-            $query = "INSERT INTO users (user_name, user_pass, user_api, user_creation_date, user_public) VALUES (?, ?, ?, NOW(), 0)";
-
-            $stmt = $pdo->prepare($query);
-            $stmt->execute([$user_name, $hash_pass, $api_key]);
-
-            json_response(204, "");
-            break;
         case "PATCH":
-            
-            $request_data = json_decode(file_get_contents('php://input'), true);
 
-            $api_key = $request_data["api_key"] ?? "";
+            $api_key = $_SERVER["HTTP_X_API_KEY"] ?? "";
 
             validate_data([$api_key]);
 
@@ -119,6 +166,8 @@ if (preg_match("/^user\/account/", $endpoint)) {
             if (preg_match("/^user\/account\/password$/", $endpoint)) {
 
                 // Update password
+
+                $request_data = json_decode(file_get_contents('php://input'), true);
 
                 $new_pass = $request_data["new_pass"] ?? "";
 
@@ -151,7 +200,7 @@ if (preg_match("/^user\/account/", $endpoint)) {
                 // Toggle account to public/private
 
                 // The api key has already been verified so the query does not need to be prepared and executed
-                $query = "SELECT user_public FROM users WHERE user_api LIKE {$api_key}";
+                $query = "SELECT user_public FROM users WHERE user_api LIKE '{$api_key}'";
 
                 $stmt = $pdo->query($query);
 
@@ -163,7 +212,7 @@ if (preg_match("/^user\/account/", $endpoint)) {
 
                     //$isPublic ? $updateState = 0 : $updateState = 1;
 
-                    $query = "UPDATE users SET user_public = {$updateState} WHERE user_api LIKE {$api_key}";
+                    $query = "UPDATE users SET user_public = {$updateState} WHERE user_api LIKE '{$api_key}'";
 
                     $pdo->query($query);
 
@@ -178,14 +227,21 @@ if (preg_match("/^user\/account/", $endpoint)) {
             break;
         case "DELETE":
 
-            // Delete user account
+            if (preg_match("/^user\/account$/", $endpoint)) {
+                
+                // Delete user account
 
-            $query = "DELETE FROM users WHERE user_api LIKE {$api_key}";
+                $api_key = $_SERVER["HTTP_X_API_KEY"] ?? "";
+                
+                verify_api_key($pdo, $api_key);
 
-            $pdo->query($query);
+                $query = "DELETE FROM users WHERE user_api LIKE '{$api_key}'";
 
-            json_response(204, "");
-            break;
+                $pdo->query($query);
+
+                json_response(204, "");
+                break;
+            }
         default:
             json_response(404, "Endpoint does not exist");
             break;
@@ -193,6 +249,13 @@ if (preg_match("/^user\/account/", $endpoint)) {
 }
 
 else if (preg_match("/^user\/friends/", $endpoint)) {
+
+    $api_key = $_SERVER["HTTP_X_API_KEY"] ?? "";
+            
+    if (!verify_api_key($pdo, $api_key)) {
+        json_response(200, "Invalid API Key");
+    }
+    
     switch ($method) {
         case "GET":
 
@@ -310,10 +373,10 @@ else if (preg_match("/^library$/", $endpoint)) {
 
             $user_id = get_id_from_name($pdo, $user_name);
 
-            $query = "DELETE FROM cards WHERE card_owner = {$user_id} AND card_name LIKE ?";
+            $query = "DELETE FROM cards WHERE card_owner = ? AND card_name LIKE ?";
 
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$card_name]);
+            $stmt->execute([$user_id, $card_name]);
 
             json_response(204, "");
             break;
@@ -335,7 +398,6 @@ else if (preg_match("/^cards\/?[0-9]*?$/", $endpoint)) {
                 "image" => $card_array["images"]["small"],
                 "rarity" => $card_array["rarity"]
             ];
-            //return $card_array;
         }, $cards);
 
         if ($id > 0 && $id < 155) {
@@ -343,9 +405,8 @@ else if (preg_match("/^cards\/?[0-9]*?$/", $endpoint)) {
         }
 
         json_response(200, $cardsArray);
-        //json_response(200, $cards);
     } else {
-        //
+        json_response(404, "Endpoint does not exist");
     }
 }
 
@@ -371,7 +432,7 @@ function verify_api_key($pdo, $api_key) {
     $stmt = $pdo->prepare($query);
     $stmt->execute([$api_key]);
 
-    return $stmt->fetch();
+    return $stmt->rowCount();
 }
 
 ?>
