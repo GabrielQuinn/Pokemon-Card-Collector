@@ -134,21 +134,21 @@ if (preg_match("/^user/", $endpoint)) {
                 validate_data([$user_name, $user_pass]);
 
                 // Verify the username exists
-                $query = "SELECT user_pass FROM users WHERE user_name LIKE ?";
+                $query = "SELECT user_name, user_pass, user_api FROM users WHERE user_name LIKE ?";
 
                 $stmt = $pdo->prepare($query);
                 $stmt->execute([$user_name]);
 
                 if (!$stmt->rowCount()) {
-                    json_response(200, "Username does not exist");
+                    json_response(204, "Username does not exist");
                 }
 
                 $result = $stmt->fetch();
 
                 if (!password_verify($user_pass, $result["user_pass"])) {
-                    json_response(200, "Incorrect password");
+                    json_response(204, "Incorrect password");
                 } else {
-                    json_response(204, "");
+                    json_response(200, $result["user_api"]); // Return username & apikey
                 }
             } else {
                 json_response(404, "Endpoint does not exist");
@@ -248,7 +248,7 @@ if (preg_match("/^user/", $endpoint)) {
     }
 }
 
-else if (preg_match("/^user\/friends/", $endpoint)) {
+else if (preg_match("/^friends$/", $endpoint)) {
 
     $api_key = $_SERVER["HTTP_X_API_KEY"] ?? "";
             
@@ -267,8 +267,16 @@ else if (preg_match("/^user\/friends/", $endpoint)) {
 
             $user_id = get_id_from_name($pdo, $user_name);
 
-            $query = "SELECT user_name FROM connections INNER JOIN users ON connections.user2_id = users.user_id WHERE user1_id = {$user_id}";
+            $query = "SELECT user_name, user_creation_date FROM connections INNER JOIN users ON connections.user2_id = users.user_id WHERE user1_id = {$user_id}";
             $stmt = $pdo->query($query);
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                json_response(200, $results);
+            } else {
+                json_response(200, []);
+            }
 
             break;
         case "POST":

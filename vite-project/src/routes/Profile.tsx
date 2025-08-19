@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
 import NavBar from "../components/Navbar";
 import type { UserData } from "../types/types";
+import { useAuth } from '../contexts/AuthContext';
 
 function Profile() {
 
     const [ userData, setUserData ] = useState<UserData | null>(null)
+
+    const { user } = useAuth();
 
     async function getUserData() {
         try {
     
             // call API
 
-            const user_name = "gabe";
+            const user_name = user?.username;
     
             const url = `http://localhost/backend/api/user/account?user_name=${user_name}`;
     

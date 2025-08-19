@@ -19,7 +19,12 @@ export interface UserData {
   user_public: number;
 }
 
-export interface User {
+export interface Profile {
   user_name: string;
   user_creation_date: string;
+}
+
+export interface User {
+  username: string
+  apikey: string
 }

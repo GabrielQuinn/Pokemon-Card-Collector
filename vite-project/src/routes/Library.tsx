@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import NavBar from "../components/Navbar";
 import type { LibraryCard } from "../types/types";
 import Card from "../components/Card";
+import { useAuth } from '../contexts/AuthContext';
 
 function Library() {
 
   const [cards, setCards] = useState<LibraryCard[]>([]);
+  const { user } = useAuth();
 
   async function fetchCards() {
     try {
       // Get all cards
 
-      const user_name = "gabe";
-
+      const user_name = user?.username;
       const url = `http://localhost/backend/api/library?user_name=${user_name}`;
 
       const resp = await fetch(url);

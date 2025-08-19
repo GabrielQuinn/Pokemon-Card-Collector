@@ -222,14 +222,17 @@ a:hover {
 
 /* Users */
 
-.Users section {
+.Users {
+    padding: 0.5em;
+}
+
+.Users > section > section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5em;
-    padding: 0.3em;
 }
 
-.Users section > div {
+.userEntry {
     border: 0.1em solid var(--alt-background);
     border-radius: 0.5em;
     padding: 0.3em;

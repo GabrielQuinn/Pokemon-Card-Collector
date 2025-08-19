@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router';
+import { AuthProvider } from "./contexts/AuthProvider";
 
 import Home from './routes/Home';
 import Error from './routes/Error';
@@ -17,35 +18,35 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <AuthProvider><Home /></AuthProvider>,
       },
       {
         path: '/library',
-        element: <Library />
+        element: <AuthProvider><Library /></AuthProvider>
       },
       {
         path: '/shop',
-        element: <Shop />
+        element: <AuthProvider><Shop /></AuthProvider>
       },
       {
-        path: '/profile',
-        element: <Profile />
+        path: '/profile/:pathId',
+        element: <AuthProvider><Profile /></AuthProvider>
       },
       {
         path: '/all',
-        element: <All />
+        element: <AuthProvider><All /></AuthProvider>
       },
       {
         path: '/users',
-        element: <Users />
+        element: <AuthProvider><Users /></AuthProvider>
       },
       {
         path: '/signup',
-        element: <Signup />
+        element: <AuthProvider><Signup /></AuthProvider>
       },
       {
         path: '/login',
-        element: <Login />
+        element: <AuthProvider><Login /></AuthProvider>
       },
     ]
   }
