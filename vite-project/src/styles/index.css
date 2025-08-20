@@ -181,13 +181,15 @@ a:hover {
 /* Library */
 
 .Library img, .All img {
-    width: 6em;
+    width: 7em;
 }
 
 .Library > section, .All > section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5em;
+    row-gap: 1.5em;
+    padding: 0.2em;
 }
 
 .Library .cardEntry, .All .cardEntry {
@@ -203,6 +205,9 @@ a:hover {
 
 .Library section > div {
     margin: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
 }
 
 /* Profile */
@@ -245,6 +250,10 @@ a:hover {
 
 .Login form {
     padding: 0.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
 }
 
 .Login form > div {
@@ -252,3 +261,15 @@ a:hover {
     grid-template-columns: 1fr 2fr;
     gap: 0.5em;
 }
+
+.Login form button {
+    width: 50%;
+}
+
+/* Media Queries */
+
+/*@media screen and (min-width: 600px) {
+    .Login form  {
+        background-color: red;
+    }
+}*/

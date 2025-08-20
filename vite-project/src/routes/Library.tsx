@@ -65,7 +65,7 @@ function Library() {
           {cards.map((e) => {
             return (
               <div key={e.card_id} className={"cardEntry " + e.card_name + " " + e.card_id}>
-                <Card key={e.card_id} name={e.card_name} image={e.card_image} rarity={e.card_rarity} />
+                <Card name={e.card_name} image={e.card_image} rarity={e.card_rarity} />
                 <form onSubmit={removeFromLibrary}>
                   <button type="submit">Remove from Library</button>
                 </form>

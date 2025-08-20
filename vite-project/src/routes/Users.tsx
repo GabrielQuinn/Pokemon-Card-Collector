@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../components/Navbar";
 import type { Profile } from "../types/types";
 
@@ -46,6 +46,10 @@ function Users() {
     }
   }
 
+  async function addFriend(ev: React.FormEvent) {
+    ev.preventDefault();
+  }
+
   useEffect(() => {
     getUsers();
     getFriends();
@@ -78,7 +82,7 @@ function Users() {
                 <div key={e.user_name} className={"userEntry " + e.user_name}>
                   <h2>{e.user_name}</h2>
                   <div>{e.user_creation_date}</div>
-                  <form>
+                  <form onSubmit={addFriend}>
                     <button type="submit">Add Friend</button>
                   </form>
                 </div>
