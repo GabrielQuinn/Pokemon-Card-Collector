@@ -53,9 +53,9 @@ if (preg_match("/^user/", $endpoint)) {
     switch ($method) {
         case "GET":
 
-            $user_name = $_GET["user_name"] ?? "";
+            $user_id = $_GET["user_id"] ?? "";
 
-            validate_data([$user_name]);
+            validate_data([$user_id]);
 
             $results;
 
@@ -63,20 +63,20 @@ if (preg_match("/^user/", $endpoint)) {
                 // Get all account info
 
                 $query = "SELECT user_name, user_api, user_creation_date, user_public FROM users
-                    WHERE user_name LIKE ?";
+                    WHERE user_id = ?";
 
                 $stmt = $pdo->prepare($query);
-                $stmt->execute([$user_name]);
+                $stmt->execute([$user_id]);
 
                 $results = $stmt->fetch();
 
             } else if (preg_match("/^user\/discovery$/", $endpoint)) {
                 // Get all public accounts
 
-                $query = "SELECT user_name, user_creation_date FROM users WHERE user_public = 1 AND user_name NOT LIKE ?";
+                $query = "SELECT user_name, user_creation_date FROM users WHERE user_public = 1 AND user_id <> ?";
 
                 $stmt = $pdo->prepare($query);
-                $stmt->execute([$user_name]);
+                $stmt->execute([$user_id]);
 
                 $results = $stmt->fetchAll();
 
@@ -193,30 +193,36 @@ if (preg_match("/^user/", $endpoint)) {
                 $stmt = $pdo->prepare($query);
                 $stmt->execute([$new_key, $api_key]);
 
-                json_response(204, "");
+                $query = "SELECT user_api from users WHERE user_api LIKE ?";
+
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$new_key]);
+                $result = $stmt->fetch();
+
+                json_response(200, $result["user_api"]);
 
             } else if (preg_match("/^user\/account\/visibility$/", $endpoint)) {
 
                 // Toggle account to public/private
 
                 // The api key has already been verified so the query does not need to be prepared and executed
-                $query = "SELECT user_public FROM users WHERE user_api LIKE '{$api_key}'";
+                $query = "SELECT user_public FROM users WHERE user_api LIKE ?";
 
-                $stmt = $pdo->query($query);
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$api_key]);
 
                 $results = $stmt->fetch();
 
                 if ($results) {
-                    $isPublic = $results["user_public"];
-                    $updateState = $isPublic == 0;
+                    $is_public = $results["user_public"];
+                    $update_state = $is_public == 0;
 
-                    //$isPublic ? $updateState = 0 : $updateState = 1;
+                    $query = "UPDATE users SET user_public = ? WHERE user_api LIKE ?";
 
-                    $query = "UPDATE users SET user_public = {$updateState} WHERE user_api LIKE '{$api_key}'";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute([$update_state, $api_key]);
 
-                    $pdo->query($query);
-
-                    json_response(204, "");
+                    json_response(204, []);
                 } else {
                     json_response(200, "User data missing");
                 }
@@ -291,10 +297,21 @@ else if (preg_match("/^friends$/", $endpoint)) {
             $current_id = get_id_from_name($pdo, $current_username);
             $new_id = get_id_from_name($pdo, $new_username);
 
+            $query = "SELECT connection_id WHERE user1_id = ? AND user2_id = ?";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([$current_id. $new_id]);
+
+            if ($stmt->rowCount()) {
+
+                // Friend connection already exists
+
+                json_response(200, "User has already been added");
+            }
+
             $query = "INSERT INTO connections (user1_id, user2_id) VALUES ({$current_id}, {$new_id})";
             $pdo->query($query);
 
-            json_response(204, "");
+            json_response(204, []);
 
             break;
         case "DELETE":

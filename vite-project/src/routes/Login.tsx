@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import type React from "react";
 import { useAuth } from "../contexts/AuthContext";
 import type { User } from "../types/types";
@@ -5,24 +6,31 @@ import NavBar from "../components/Navbar";
 
 function Login() {
 
-  const { user, login } = useAuth();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  async function logIn(ev: React.FormEvent) {
+  async function logIn(ev: React.FormEvent) { // Login Form submitted
     ev.preventDefault();
     try {
         const url = "http://localhost/backend/api/user/account/login";
 
-        const formData = new FormData(ev.currentTarget as HTMLFormElement);
+        const formData = new FormData(ev.currentTarget as HTMLFormElement); // Get POST data
 
         const resp = await fetch(url, {method: "post", body: formData});
 
-        if (resp.status != 204) {
+        if (resp.status == 200) { // 
             const jsonResponse = await resp.json();
-            if (resp.status == 200) {
-              const usernameInput = document.getElementById("user_name") as HTMLInputElement;
-              const username = usernameInput?.value;
-              login({username: username, apikey: jsonResponse} as User);
-            }
+            
+            // Update client data
+
+            const usernameInput = document.getElementById("user_name") as HTMLInputElement;
+            const username = usernameInput?.value;
+            login({username: username, apikey: jsonResponse} as User);
+            
+            // Redirect user
+
+            navigate("/");
+
             return jsonResponse;
         } else {
             return null;
@@ -41,17 +49,12 @@ function Login() {
             <form onSubmit={logIn}>
                 <div>
                     <label htmlFor="user_name">Username:</label>
-                    <input type="text" id="user_name" className="user_name" />
+                    <input type="text" id="user_name" name="user_name" />
                     <label htmlFor="user_pass">Password:</label>
-                    <input type="password" id="user_pass" className="user_pass" />
+                    <input type="password" id="user_pass" name="user_pass" />
                 </div>
                 <button>Log In</button>
             </form>
-            {user?.username != undefined ? (
-              <h2>Successfully Logged In</h2>
-            ) : (
-              <div></div>
-            )}
         </section>
       </section>
     </>

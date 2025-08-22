@@ -24,7 +24,7 @@ This website features Pokemon cards, which can be collected and stored to the us
 
 ### Stack
 
-Frontend - React/TS
-Backend - PHP
-Database - MySQL
-API - Pokemon TCG API
+- Frontend - React/TS
+- Backend - PHP
+- Database - MySQL
+- API - Pokemon TCG API
