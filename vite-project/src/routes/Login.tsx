@@ -12,31 +12,37 @@ function Login() {
   async function logIn(ev: React.FormEvent) { // Login Form submitted
     ev.preventDefault();
     try {
-        const url = "http://localhost/backend/api/user/account/login";
+      const url = "http://localhost/backend/api/user/account/login";
 
-        const formData = new FormData(ev.currentTarget as HTMLFormElement); // Get POST data
+      const formData = new FormData(ev.currentTarget as HTMLFormElement); // Get POST data
 
-        const resp = await fetch(url, {method: "post", body: formData});
+      const resp = await fetch(url, {method: "post", body: formData});
 
-        if (resp.status == 200) { // 
-            const jsonResponse = await resp.json();
+      if (resp.status == 200) {
+        const jsonResponse = await resp.json();
             
-            // Update client data
+        // Update client data
 
-            const usernameInput = document.getElementById("user_name") as HTMLInputElement;
-            const username = usernameInput?.value;
-            login({username: username, apikey: jsonResponse} as User);
+        const usernameInput = document.getElementById("user_name") as HTMLInputElement;
+        const username = usernameInput?.value;
+        login({username: username, apikey: jsonResponse["api"], id: jsonResponse["id"]} as User);
             
-            // Redirect user
+        // Redirect user
 
-            navigate("/");
+        navigate("/");
 
-            return jsonResponse;
-        } else {
-            return null;
-        }
+        return jsonResponse;
+      } else {
+
+        // Error logging in
+
+        const errorDisplay = document.getElementById("errorDisplay") as HTMLElement;
+        errorDisplay.classList.remove("hidden");
+
+        return null;
+      }
     } catch (error: unknown) {
-        throw new Error("Error: " + error);
+      throw new Error("Error: " + error);
     }
   }
 
@@ -46,14 +52,15 @@ function Login() {
       <section className="Login">
         <h1>Log In</h1>
         <section>
-            <form onSubmit={logIn}>
-                <div>
-                    <label htmlFor="user_name">Username:</label>
-                    <input type="text" id="user_name" name="user_name" />
-                    <label htmlFor="user_pass">Password:</label>
-                    <input type="password" id="user_pass" name="user_pass" />
-                </div>
-                <button>Log In</button>
+          <form onSubmit={logIn}>
+              <div>
+                <label htmlFor="user_name">Username:</label>
+                <input type="text" id="user_name" name="user_name" />
+                <label htmlFor="user_pass">Password:</label>
+                <input type="password" id="user_pass" name="user_pass" />
+              </div>
+              <div id="errorDisplay" className="hidden error">Invalid Username or Password</div>
+              <button>Log In</button>
             </form>
         </section>
       </section>

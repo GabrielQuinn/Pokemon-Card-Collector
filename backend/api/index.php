@@ -134,7 +134,7 @@ if (preg_match("/^user/", $endpoint)) {
                 validate_data([$user_name, $user_pass]);
 
                 // Verify the username exists
-                $query = "SELECT user_name, user_pass, user_api FROM users WHERE user_name LIKE ?";
+                $query = "SELECT user_id, user_name, user_pass, user_api FROM users WHERE user_name LIKE ?";
 
                 $stmt = $pdo->prepare($query);
                 $stmt->execute([$user_name]);
@@ -148,7 +148,7 @@ if (preg_match("/^user/", $endpoint)) {
                 if (!password_verify($user_pass, $result["user_pass"])) {
                     json_response(204, "Incorrect password");
                 } else {
-                    json_response(200, $result["user_api"]); // Return username & apikey
+                    json_response(200, ["api" => $result["user_api"], "id" => $result["user_id"]]); // Return username & apikey
                 }
             } else {
                 json_response(404, "Endpoint does not exist");
@@ -273,7 +273,7 @@ else if (preg_match("/^friends$/", $endpoint)) {
 
             $user_id = get_id_from_name($pdo, $user_name);
 
-            $query = "SELECT user_name, user_creation_date FROM connections INNER JOIN users ON connections.user2_id = users.user_id WHERE user1_id = {$user_id}";
+            $query = "SELECT user_id, user_name, user_creation_date FROM connections INNER JOIN users ON connections.user2_id = users.user_id WHERE user1_id = {$user_id}";
             $stmt = $pdo->query($query);
 
             $results = $stmt->fetchAll();
@@ -297,9 +297,9 @@ else if (preg_match("/^friends$/", $endpoint)) {
             $current_id = get_id_from_name($pdo, $current_username);
             $new_id = get_id_from_name($pdo, $new_username);
 
-            $query = "SELECT connection_id WHERE user1_id = ? AND user2_id = ?";
+            $query = "SELECT connection_id FROM connections WHERE user1_id = ? AND user2_id = ?";
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$current_id. $new_id]);
+            $stmt->execute([$current_id, $new_id]);
 
             if ($stmt->rowCount()) {
 
@@ -318,7 +318,7 @@ else if (preg_match("/^friends$/", $endpoint)) {
             
             // Remove friend
 
-            $current_username = $GET["current_username"] ?? "";
+            $current_username = $_GET["current_username"] ?? "";
             $new_username = $_GET["new_username"] ?? "";
 
             validate_data([$current_username, $new_username]);
@@ -326,7 +326,7 @@ else if (preg_match("/^friends$/", $endpoint)) {
             $current_id = get_id_from_name($pdo, $current_username);
             $new_id = get_id_from_name($pdo, $new_username);
 
-            $query = "DELETE FROM connections WHERE user1_id = {$current_id} AND user2_id = {$new_id})";
+            $query = "DELETE FROM connections WHERE user1_id = {$current_id} AND user2_id = {$new_id}";
             $pdo->query($query);
 
             json_response(204, "");
@@ -437,7 +437,7 @@ else if (preg_match("/^cards\/?[0-9]*?$/", $endpoint)) {
 
 function validate_data($data_array) {
     foreach ($data_array as $data) {
-        if (empty($data)) json_response(200, "Missing Required Data");
+        if (empty($data)) json_response(400, "Missing Required Data");
     }
 }
 

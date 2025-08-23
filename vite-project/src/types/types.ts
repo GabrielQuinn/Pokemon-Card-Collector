@@ -20,11 +20,13 @@ export interface UserData {
 }
 
 export interface Profile {
+  user_id: number;
   user_name: string;
   user_creation_date: string;
 }
 
 export interface User {
-  username: string
-  apikey: string
+  id: number;
+  username: string;
+  apikey: string;
 }

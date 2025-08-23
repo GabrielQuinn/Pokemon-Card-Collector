@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import NavBar from "../components/Navbar";
 import type { UserData } from "../types/types";
 import { useAuth } from "../contexts/AuthContext";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 
 function Profile() {
 
@@ -12,22 +12,11 @@ function Profile() {
 
     const { user } = useAuth();
     const params = useParams();
-
-    /*
-
-
-        use "useParams" to get the specific id in the URL and then use that in the
-        GET request. 
-
-
-    */
+    const navigate = useNavigate();
 
     async function getUserData() { // Fetch user info (API key, creation date, visibility)
         try {
-
-            console.log(params.pathId);
-
-            //const user_name = user?.username;
+            
             const user_id = params.pathId;
     
             const url = `http://localhost/backend/api/user/account?user_id=${user_id}`;
@@ -96,12 +85,27 @@ function Profile() {
     
             const apiKey = user?.apikey as string;
             const url = `http://localhost/backend/api/user/account/visibility`;
+    
+            await fetch(url, {method: "delete", headers: {"X-API-KEY": apiKey}});
 
-            console.log(apiKey);
+            // TODO -- Update "Set account to Private/Public" after button click
+            
+        } catch (error: unknown) {
+            console.error("Error:", error);
+        }
+    }
+
+    async function deleteAccount() {
+        try {
+    
+            const apiKey = user?.apikey as string;
+            const url = `http://localhost/backend/api/user/account`;
     
             await fetch(url, {method: "PATCH", headers: {"X-API-KEY": apiKey}});
 
-            // TODO -- Update "Set account to Private/Public" after button click
+            // TODO -- Log out user
+
+            navigate("/login");
             
         } catch (error: unknown) {
             console.error("Error:", error);
@@ -135,10 +139,13 @@ function Profile() {
                         <input type="text" id="new_pass" name="new_pass" />
                         <button type="submit">Update</button>
                     </form>
-                    <button onClick={revealApiKey}>View Full API Key</button>
-                    <button onClick={resetApiKey}>Reset API Key</button>
-                    <button onClick={toggleResetPassword}>Change Password</button>
-                    <button onClick={toggleVisibility}>Set account to {userData?.user_public == 1 ? "Private" : "Public"}</button>
+                    <div>
+                        <button onClick={revealApiKey}>View Full API Key</button>
+                        <button onClick={resetApiKey}>Reset API Key</button>
+                        <button onClick={toggleResetPassword}>Change Password</button>
+                        <button onClick={toggleVisibility}>Set account to {userData?.user_public == 1 ? "Private" : "Public"}</button>
+                        <button onClick={deleteAccount}>Delete Account</button>
+                    </div>
                 </section>
             </section>
         </>

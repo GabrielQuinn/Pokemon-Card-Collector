@@ -92,6 +92,10 @@ a:hover {
     display: none !important;
 }
 
+.error {
+    color: #ff447f;
+}
+
 /* Rarities */
 
 .common {
@@ -237,7 +241,7 @@ a:hover {
     padding: 1em;
 }
 
-.Profile section > div {
+.Profile section > div:first-of-type {
     display: grid;
     grid-template-columns: 1fr 3fr;
     gap: 1em;
@@ -258,6 +262,13 @@ a:hover {
     width: 50%;
 }
 
+.Profile section > div:last-of-type {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
+    padding: 1em 2em;
+}
+
 /* Users */
 
 .Users {
@@ -271,7 +282,8 @@ a:hover {
 }
 
 .userEntry {
-    border: 0.1em solid var(--alt-background);
+    background-color: var(--secondary-background);
+    border: 0.1em solid var(--extra);
     border-radius: 0.5em;
     padding: 0.3em;
     display: flex;
@@ -308,7 +320,7 @@ a:hover {
     gap: 2.5em;
 }
 
-.Login form > div {
+.Login form > div:first-of-type {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 0.5em;
@@ -321,8 +333,69 @@ a:hover {
 
 /* Media Queries */
 
-/*@media screen and (min-width: 600px) {
-    .Login form  {
-        background-color: red;
+@media screen and (min-width: 600px) {
+
+    /* Login */
+    .Login {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
-}*/
+    .Login form  {
+        padding: 2em;
+    }
+
+    /* Shop */
+    .Shop {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+    .Shop > section {
+        width: 50vw;
+    }
+
+    /* Library */
+    .Library > section {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .cardEntry form {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    /* Users */
+    .Users > section > h2 {
+        text-align: center;
+        border-bottom: 0.15em solid var(--alt-text);
+        padding-bottom: 0.2em;
+    }
+    .Users > section > h2:last-of-type {
+        margin-top: 2em;
+    }
+    .Users > section > section {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    /* Profile */
+    .Profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .Profile section {
+        background-color: var(--secondary-background);
+        width: 70vw;
+        border: 0.15em solid var(--alt-text);
+        border-radius: 0.5em;
+        align-items: center;
+    }
+    .Profile section > div:first-of-type {
+        border-bottom: 0.15em solid var(--extra);
+        padding: 0 2em 0.5em 2em;
+    }
+    .Profile section > div:last-of-type {
+        padding: 0;
+    }
+}
