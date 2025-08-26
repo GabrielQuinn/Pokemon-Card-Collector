@@ -24,7 +24,6 @@ function Users() {
       const jsonResponse = await resp.json();
       setUsers(jsonResponse);
 
-      return jsonResponse;
     } catch (error: unknown) {
       console.error("Error:", error);
     }
@@ -42,7 +41,6 @@ function Users() {
       const jsonResponse = await resp.json();
       setFriends(jsonResponse);
 
-      return jsonResponse;
     } catch (error: unknown) {
       console.error("Error:", error);
     }

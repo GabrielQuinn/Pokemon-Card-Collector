@@ -37,8 +37,6 @@ function Login() {
 
         const errorDisplay = document.getElementById("errorDisplay") as HTMLElement;
         errorDisplay.classList.remove("hidden");
-
-        return null;
       }
     } catch (error: unknown) {
       throw new Error("Error: " + error);

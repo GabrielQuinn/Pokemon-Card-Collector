@@ -20,7 +20,6 @@ function Library() {
 
       const jsonResponse = await resp.json();
       setCards(jsonResponse);
-      return jsonResponse;
     } catch (error: unknown) {
       console.error("Error:", error);
     }
@@ -40,12 +39,8 @@ function Library() {
 
       const resp = await fetch(url, {method: "delete"});
 
-      if (resp.status != 204) {
-        const jsonResponse = await resp.json();
-        return jsonResponse;
-      } else {
+      if (resp.status == 204) {
         fetchCards();
-        return null;
       }
     } catch (error: unknown) {
       throw new Error("Error: " + error);

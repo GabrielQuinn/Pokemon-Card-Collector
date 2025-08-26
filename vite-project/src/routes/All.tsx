@@ -17,7 +17,7 @@ function All() {
             const jsonResponse = await resp.json();
     
             setCards(jsonResponse);
-            return jsonResponse;
+            
         } catch (error: unknown) {
             console.error("Error:", error);
         }

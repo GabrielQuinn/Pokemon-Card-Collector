@@ -27,7 +27,6 @@ function Profile() {
     
             setUserData(jsonResponse); // Save in state
 
-            return jsonResponse;
         } catch (error: unknown) {
             console.error("Error:", error);
         }
@@ -47,11 +46,12 @@ function Profile() {
 
             const jsonResponse = await resp.json();
 
+            console.log(jsonResponse);
+
             //setUserData(); // Save in state
 
             // TODO -- Update auth user with the new api key
 
-            return jsonResponse;
         } catch (error: unknown) {
             console.error("Error:", error);
         }

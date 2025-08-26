@@ -20,13 +20,24 @@ function Signup() {
     
       const resp = await fetch(url, {method: "post", body: formData});
 
-      const jsonResponse = await resp.json();
+      if (resp.status == 200) {
 
-      login({username: jsonResponse["user_name"], apikey: jsonResponse["user_api"], id: jsonResponse["user_id"]} as User);
+        const jsonResponse = await resp.json();
 
-      // Redirect user
+        login({username: jsonResponse["user_name"], apikey: jsonResponse["user_api"], id: jsonResponse["user_id"]} as User);
 
-      navigate("/");
+        // Redirect user
+
+        navigate("/");
+
+      } else {
+
+        // Error creating account
+
+        const errorDisplay = document.getElementById("errorDisplay") as HTMLElement;
+        errorDisplay.classList.remove("hidden");
+
+      }
 
     } catch (error: unknown) {
       console.error("Error:", error);

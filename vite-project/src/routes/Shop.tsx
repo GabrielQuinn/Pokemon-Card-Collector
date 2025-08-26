@@ -3,11 +3,13 @@ import { useState } from "react";
 import type { Card } from "../types/types";
 import "../styles/index.css";
 import { NavLink } from "react-router";
+import { useAuth } from "../contexts/AuthContext";
 
 function Shop() {
 
     const [ currentCard, setCurrentCard ] = useState<Card | null>(null);
-
+    const { user } = useAuth();
+    
     async function getCard() {
 
         try {
@@ -23,8 +25,6 @@ function Shop() {
             const jsonResponse = await resp.json();
 
             setCurrentCard(jsonResponse);
-            //console.log(jsonResponse);
-            return jsonResponse;
         } catch (error: unknown) {
             console.error("Error:", error);
         }
@@ -40,7 +40,7 @@ function Shop() {
             const formData = new FormData();
             const card_image = currentCard?.image as string;
             const card_rarity = currentCard?.rarity as string;
-            const user_name = "gabe" as string;
+            const user_name = user?.username as string;
             const card_name = currentCard?.name as string;
 
             formData.append("card_image", card_image);
@@ -50,13 +50,8 @@ function Shop() {
 
             const resp = await fetch(url, {method: "post", headers: {"X-API-KEY": apiKey}, body: formData});
 
-            if (resp.status != 204) {
-                const jsonResponse = await resp.json();
-                return jsonResponse;
-            } else {
+            if (resp.status == 204) {
                 setCurrentCard(null);
-
-                return null;
             }
         } catch (error: unknown) {
             throw new Error("Error: " + error);
