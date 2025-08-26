@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import NavBar from "../components/Navbar";
 import type { UserData } from "../types/types";
 import { useAuth } from "../contexts/AuthContext";
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 
 function Profile() {
 
@@ -10,9 +10,9 @@ function Profile() {
     const [ viewKey, setViewKey ] = useState(false);
     const [ editPass, setEditPass ] = useState(false);
 
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const params = useParams();
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     async function getUserData() { // Fetch user info (API key, creation date, visibility)
         try {
@@ -84,9 +84,9 @@ function Profile() {
         try {
     
             const apiKey = user?.apikey as string;
-            const url = `http://localhost/backend/api/user/account/visibility`;
+            const url = "http://localhost/backend/api/user/account/visibility";
     
-            await fetch(url, {method: "delete", headers: {"X-API-KEY": apiKey}});
+            await fetch(url, {method: "PATCH", headers: {"X-API-KEY": apiKey}});
 
             // TODO -- Update "Set account to Private/Public" after button click
             
@@ -103,9 +103,10 @@ function Profile() {
     
             await fetch(url, {method: "PATCH", headers: {"X-API-KEY": apiKey}});
 
-            // TODO -- Log out user
+            // Log out user
+            logout();
 
-            navigate("/login");
+            //navigate("/login");
             
         } catch (error: unknown) {
             console.error("Error:", error);
@@ -116,13 +117,15 @@ function Profile() {
         getUserData();
     }, []);
 
+    const ownerProfile = userData?.user_name == user?.username;
+
     const userApi = userData?.user_api as string;
 
     return (
         <>
             <NavBar />
             <section className="Profile">
-                <h1>Profile</h1>
+                <h1>{userData?.user_name != user?.username && userData?.user_name != undefined ? userData?.user_name + "'s " : ""}Profile</h1>
                 <section>
                     <div>
                         <div>Username:</div>
@@ -131,15 +134,15 @@ function Profile() {
                         <div>{userData?.user_public == 1 ? "Public" : "Private"}</div>
                         <div>Creation Date:</div>
                         <div>{userData?.user_creation_date}</div>
-                        <div>API Key:</div>
-                        <div>{viewKey || userApi == undefined ? userApi : userApi.slice(0, 12) + "..."}</div>
+                        <div className={!ownerProfile ? "hidden" : ""}>API Key:</div>
+                        <div className={!ownerProfile ? "hidden" : ""}>{viewKey || userApi == undefined ? userApi : userApi.slice(0, 12) + "..."}</div>
                     </div>
                     <form onSubmit={resetPassword} className={editPass ? "" : "hidden"}>
                         <label htmlFor="new_pass">New Password:</label>
                         <input type="text" id="new_pass" name="new_pass" />
                         <button type="submit">Update</button>
                     </form>
-                    <div>
+                    <div className={!ownerProfile ? "hidden" : ""}>
                         <button onClick={revealApiKey}>View Full API Key</button>
                         <button onClick={resetApiKey}>Reset API Key</button>
                         <button onClick={toggleResetPassword}>Change Password</button>

@@ -102,7 +102,7 @@ if (preg_match("/^user/", $endpoint)) {
                 validate_data([$user_name, $user_pass]);
 
                 // Verify the username does not already exist
-                $query = "SELECT user_id FROM users WHERE user_name LIKE ?";
+                $query = "SELECT user_id, user_name, user_api FROM users WHERE user_name LIKE ?";
 
                 $stmt = $pdo->prepare($query);
                 $stmt->execute([$user_name]);
@@ -110,6 +110,9 @@ if (preg_match("/^user/", $endpoint)) {
                 if ($stmt->rowCount()) {
                     json_response(200, "Username already exists");
                 }
+
+                // Store results
+                $results = $stmt->fetch();
                 
                 // Hash the password
                 $hash_pass = password_hash($user_pass, PASSWORD_DEFAULT);
@@ -122,7 +125,7 @@ if (preg_match("/^user/", $endpoint)) {
                 $stmt = $pdo->prepare($query);
                 $stmt->execute([$user_name, $hash_pass, $api_key]);
 
-                json_response(204, "");
+                json_response(200, $results);
                 break;
             } else if (preg_match("/^user\/account\/login$/", $endpoint)) {
 

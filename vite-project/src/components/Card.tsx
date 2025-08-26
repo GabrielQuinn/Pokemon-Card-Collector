@@ -5,7 +5,7 @@ function Card({ name, image, rarity }: CardProps ) {
     <>
       <div className="Card">
         <h2 className={rarity.toLowerCase()}>{name}</h2>
-        <img src={image} alt={"The official " + name + " Pokemon card"} />
+        <img src={image} alt={name != undefined ? "The official " + name + " Pokemon card" : ""} />
         <p>Rarity: {rarity}</p>
       </div>
     </>

@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useState, useEffect, type ReactNode } from 'react';
-import { AuthContext, type AuthObject } from './AuthContext';
-import type { User } from '../types/types';
-//import Login from '../routes/Login';
-import { useNavigate } from 'react-router';
+import { useCallback, useMemo, useState, useEffect, type ReactNode } from "react";
+import { AuthContext, type AuthObject } from "./AuthContext";
+import type { User } from "../types/types";
+import { useNavigate, useLocation } from "react-router";
 
 export function AuthProvider({ children }: { children?: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const login = useCallback((user: User) => setUser(user), []);
   const logout = useCallback(() => setUser(null), []);
@@ -16,9 +16,15 @@ export function AuthProvider({ children }: { children?: ReactNode }) {
     [user, login, logout]
   );
 
-  useEffect(() => {
-    if (user == null) navigate("/Login");
-  }, [user, navigate]);
+  useEffect(() => { // Check if user exists
+    if (user == null) {
+      if (location.pathname == "/signup") {
+        navigate("/signup");
+      } else {
+        navigate("/login");
+      }
+    }
+  }, [user, navigate, location.pathname]);
 
   return (
     <AuthContext value={contextValue}>

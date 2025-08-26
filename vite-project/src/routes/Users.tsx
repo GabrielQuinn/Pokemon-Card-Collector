@@ -15,7 +15,7 @@ function Users() {
   async function getUsers() {
     try {
       // Get all users
-      const user_id = 1;
+      const user_id = user?.id;
 
       const url = `http://localhost/backend/api/user/discovery?user_id=${user_id}`;
 

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import type React from "react";
 import { useAuth } from "../contexts/AuthContext";
 import type { User } from "../types/types";
@@ -30,8 +30,7 @@ function Login() {
         // Redirect user
 
         navigate("/");
-
-        return jsonResponse;
+        
       } else {
 
         // Error logging in
@@ -60,6 +59,7 @@ function Login() {
                 <input type="password" id="user_pass" name="user_pass" />
               </div>
               <div id="errorDisplay" className="hidden error">Invalid Username or Password</div>
+              <div>Don't have an account? <NavLink to="/signup">Create Account</NavLink></div>
               <button>Log In</button>
             </form>
         </section>

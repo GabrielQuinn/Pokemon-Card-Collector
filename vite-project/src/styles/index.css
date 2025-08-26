@@ -306,9 +306,9 @@ a:hover {
     width: 10em;
 }
 
-/* Login */
+/* Login + Signup */
 
-.Login form {
+.Login form, .Signup form {
     background-color: var(--secondary-background);
     border: 0.15em solid var(--alt-text);
     margin: 1em;
@@ -320,14 +320,14 @@ a:hover {
     gap: 2.5em;
 }
 
-.Login form > div:first-of-type {
+.Login form > div:first-of-type, .Signup form > div:first-of-type {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 0.5em;
     row-gap: 1em;
 }
 
-.Login form button {
+.Login form button, .Signup form button {
     width: 50%;
 }
 
@@ -335,13 +335,13 @@ a:hover {
 
 @media screen and (min-width: 600px) {
 
-    /* Login */
-    .Login {
+    /* Login + Signup */
+    .Login, .Signup {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-    .Login form  {
+    .Login form, .Signup form  {
         padding: 2em;
     }
 

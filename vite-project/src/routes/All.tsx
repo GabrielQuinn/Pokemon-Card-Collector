@@ -7,16 +7,13 @@ function All() {
 
     const [ cards, setCards ] = useState<CardProps[]>([]);
     
-    async function getCards() {
+    async function getCards() { // Fetch all cards
     
         try {
-    
-            // call API
     
             const url = "http://localhost/backend/api/cards";
     
             const resp = await fetch(url);
-    
             const jsonResponse = await resp.json();
     
             setCards(jsonResponse);
